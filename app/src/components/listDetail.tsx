@@ -44,7 +44,7 @@ export const ListDetail = ({
                 <Edit2 size={20} />
               </button>
               <button
-                onClick={() => deleteList(selectedListIndex!)}
+                onClick={() => deleteList(selectedListIndex)}
                 className="p-2 text-red-600 hover:bg-red-50 rounded"
                 title="削除"
               >

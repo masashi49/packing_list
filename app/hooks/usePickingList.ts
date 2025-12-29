@@ -1,17 +1,9 @@
 // ここにカスタムフック
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Checklist, ViewType } from "../typs";
+import { useLocalStorageState } from "./useLocalStorageState";
 
 export function usePickingList() {
-  const [lists, setLists] = useState<Checklist[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("checklists");
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    }
-    return [];
-  });
   const [currentView, setCurrentView] = useState<ViewType>("list");
   const [selectedListIndex, setSelectedListIndex] = useState<number | null>(
     null
@@ -19,9 +11,7 @@ export function usePickingList() {
   const [newListName, setNewListName] = useState<string>("");
   const [newItems, setNewItems] = useState<string[]>([""]);
 
-  useEffect(() => {
-    localStorage.setItem("checklists", JSON.stringify(lists));
-  }, [lists]);
+  const [lists, setLists] = useLocalStorageState<Checklist[]>("checklists", []);
 
   const addItemField = () => {
     if (newItems.length < 30) {
@@ -51,7 +41,7 @@ export function usePickingList() {
     setSelectedListIndex(null);
   }, []);
 
-  const saveList = useCallback(() => {
+  const saveList = () => {
     const items = newItems.filter((item) => item.trim() !== "");
     if (newListName.trim() === "" || items.length === 0) {
       alert("リスト名と少なくとも1つの項目を入力してください");
@@ -79,39 +69,25 @@ export function usePickingList() {
 
     resetForm();
     setCurrentView("list");
-  }, [
-    resetForm,
-    setCurrentView,
-    newListName,
-    newItems,
-    currentView,
-    selectedListIndex,
-    lists,
-  ]);
+  };
 
-  const deleteList = useCallback(
-    (index: number) => {
-      if (confirm("このリストを削除しますか?")) {
-        setLists(lists.filter((_, i) => i !== index));
-        setCurrentView("list");
-      }
-    },
-    [lists, setCurrentView]
-  );
+  const deleteList = (index: number) => {
+    if (confirm("このリストを削除しますか?")) {
+      setLists(lists.filter((_, i) => i !== index));
+      setCurrentView("list");
+    }
+  };
 
-  const toggleItem = useCallback(
-    (itemIndex: number) => {
-      if (selectedListIndex === null) return;
+  const toggleItem = (itemIndex: number) => {
+    if (selectedListIndex === null) return;
 
-      const updated = [...lists];
-      updated[selectedListIndex].items[itemIndex].checked =
-        !updated[selectedListIndex].items[itemIndex].checked;
-      setLists(updated);
-    },
-    [lists, selectedListIndex]
-  );
+    const updated = [...lists];
+    updated[selectedListIndex].items[itemIndex].checked =
+      !updated[selectedListIndex].items[itemIndex].checked;
+    setLists(updated);
+  };
 
-  const clearAllChecks = useCallback(() => {
+  const clearAllChecks = () => {
     if (selectedListIndex === null) return;
 
     const updated = [...lists];
@@ -119,7 +95,7 @@ export function usePickingList() {
       (item) => ({ ...item, checked: false })
     );
     setLists(updated);
-  }, [lists, selectedListIndex]);
+  };
 
   const startEdit = useCallback(() => {
     if (selectedListIndex === null) return;
