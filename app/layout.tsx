@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   description:
     "持ち物を管理して、忘れ物をゼロにしましょう！リストを作成し、チェック項目を設定するだけで、外出前の確認が簡単に。",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/icon-192x192.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

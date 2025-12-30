@@ -9,7 +9,9 @@ const withPWA = require("next-pwa")({
 });
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Turbopackの設定を追加（空でもOK）
+  turbopack: {},
+
   async headers() {
     return [
       {
