@@ -10,7 +10,6 @@ const withPWA = require("next-pwa")({
 
 const nextConfig: NextConfig = {
   turbopack: {},
-
   async headers() {
     return [
       {
